@@ -127,7 +127,12 @@ app.post('/managers/add', (req, res) => {
     const newManager = {
         _id: req.body._id,
         name: req.body.name,
-        salary: req.body.salary,
+        salary: parseInt(req.body.salary),
+    }
+
+    if (newManager.salary < 30000 || newManager.salary > 70000) {
+        res.render("managerError")
+        return;
     }
 
     res.redirect('/managers')

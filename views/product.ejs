@@ -1,0 +1,35 @@
+<title>Products</title>
+
+<table>
+    <tr>
+        <th>PID</th>
+        <th>Description</th>
+        <th>SID</th>
+        <th>Location</th>
+        <th>Price</th>
+        <th>Delete</th>
+    </tr>
+
+    <% product_store.forEach((currentElement)=> { %>
+        <tr>
+            <td>
+                <%= currentElement.pid %>
+            </td>
+            <td>
+                <%= currentElement.productdesc %>
+            </td>
+            <td>
+                <%= currentElement.sid %>
+            </td>
+            <td>
+                <%= currentElement.location %>
+            </td>
+            <td>
+                <%= currentElement.price %>
+            </td>
+        </tr>
+
+        <% }) %>
+</table>
+
+<a href="/">Home</a>

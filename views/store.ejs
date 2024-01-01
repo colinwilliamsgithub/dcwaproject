@@ -1,0 +1,32 @@
+<title>Stores</title>
+
+<table>
+    <tr>
+        <th>SID</th>
+        <th>Location</th>
+        <th>Manager ID</th>
+        <th>Delete</th>
+    </tr>
+
+    <% store.forEach((currentElement)=> { %>
+        <tr>
+            <td>
+                <%= currentElement.sid %>
+            </td>
+            <td>
+                <%= currentElement.location %>
+            </td>
+            <td>
+                <%= currentElement.mgrid %>
+            </td>
+            <td>
+                <a href="/stores/edit/<%= currentElement.sid %>">Update</a>
+            </td>
+        </tr>
+
+        <% }) %>
+
+            </tr>
+</table>
+
+<a href="/">Home</a>

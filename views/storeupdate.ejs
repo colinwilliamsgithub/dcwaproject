@@ -1,0 +1,14 @@
+<form method="POST" action="/stores/edit/<%= store.sid %>">
+<label>SID:</label>
+<input type="text" id="sid" name="sid" value="<%= store.sid %>" readonly>
+<br>
+<label for="location">Location:</label>
+<input type="text" id="location" name="location" value="<%= store.location %>" minlength="1" required>
+<br>
+<label for="mgrid">Manager ID:</label>
+<input type="text" id="mgrid" name="mgrid" value="<%= store.mgrid %>" minlength="4" maxlength="4" required>
+<br>
+<button type="submit">Update Store</button>
+<br>
+</form>
+<a href="/">Home</a>

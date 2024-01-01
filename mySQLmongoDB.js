@@ -15,6 +15,19 @@ pmysql.createPool({
         console.log("pool error:" + e)
     })
 
+const MongoClient = require('mongodb').MongoClient
+
+var coll;
+
+MongoClient.connect('mongodb://127.0.0.1:27017')
+    .then((client) => {
+        db = client.db('proj2023MongoDB')
+        coll = db.collection('managers')
+    })
+    .catch((error) => {
+        console.log(error.message)
+    })
+
 function getStores() {
     return new Promise((resolve, reject) => {
         pool.query('SELECT * FROM store')
@@ -44,6 +57,23 @@ function updateStore(storeId, updatedStore) {
     })
 }
 
+function addStore(newStore) {
+    const { sid, location, mgrid } = newStore;
+
+    const query = `INSERT INTO store (sid, location, mgrid) VALUES (?, ?, ?)`;
+
+    return new Promise((resolve, reject) => {
+        pool.query(query, [sid, location, mgrid], (error, results) => {
+            if (error) {
+                reject(error)
+            } else {
+                resolve(results)
+            }
+        })
+    })
+}
+
+
 function getProducts() {
     return new Promise((resolve, reject) => {
         pool.query('SELECT p.pid, s.sid, ps.Price, s.location, p.productdesc FROM product p LEFT JOIN (store s, product_store ps) ON ps.pid = p.pid AND ps.sid = s.sid ORDER BY p.pid asc;')
@@ -71,4 +101,17 @@ function deleteProduct(productID) {
     })
 }
 
-module.exports = { getProducts, getStores, updateStore, deleteProduct }
+function findAll () {
+    return new Promise((resolve, reject) => {
+        var cursor = coll.find({}).sort({"_id": 1})
+        cursor.toArray()
+            .then((documents) => {
+                resolve(documents)
+            })
+            .catch((error) => {
+                reject(error)
+            })
+    })
+}
+
+module.exports = { getProducts, getStores, updateStore, addStore, deleteProduct, findAll }

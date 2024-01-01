@@ -1,0 +1,16 @@
+<title>Add Store</title>
+<h1>Add Store</h1>
+<form method="POST" action="/stores/add">
+<label>SID:</label>
+<input type="text" id="sid" name="sid" required>
+<br>
+<label>Location:</label>
+<input type="text" id="location" name="location" minlength="1" required>
+<br>
+<label>Manager ID:</label>
+<input type="text" id="mgrid" name="mgrid" minlength="4" maxlength="4" required>
+<br>
+<button type="submit">Add Store</button>
+<br>
+</form>
+<a href="/stores">Back</a>

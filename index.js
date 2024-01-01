@@ -1,6 +1,7 @@
 var express = require('express')
 var ejs = require('ejs')
-var mySQLDAO = require('./mySQLDAO')
+var mySQLDAO = require('./mySQLmongoDB')
+var mongoDAO = require('./mySQLmongoDB')
 var axios = require('axios');
 
 var app = express()
@@ -47,8 +48,35 @@ app.post('/stores/edit/:sid', (req, res) => {
         })
         .catch(error => {
             console.error(error)
-            res.send(error)
+            mySQLDAO.getStores()
+        .then((data) => {
+            const currentStore = data.find(store => store.sid === storeId)
+            console.log(data)
+            res.render("storeError", { "store": currentStore })
+        })
+        .catch((error) => res.send(error))
         });
+});
+
+app.get('/stores/add', (req, res) => {
+    res.render("storeAdd")
+})
+
+app.post('/stores/add', (req, res) => {
+    const newStore = {
+        sid: req.body.sid,
+        location: req.body.location,
+        mgrid: req.body.mgrid,
+    }
+
+    mySQLDAO.addStore(newStore)
+        .then(() => {
+            console.log(`Store added successfully`)
+            res.redirect('/stores') // Redirect to the stores page after successful update
+        })
+        .catch(error => {
+            console.error(error)
+        })
 });
 
 app.get('/products', (req, res) => {
@@ -75,6 +103,24 @@ app.get('/products/delete/:pid', (req, res) => {
         })
         .catch((error) => res.send(error))
 })
+})
+
+app.get('/managers', (req, res) => {
+    mongoDAO.findAll()
+        .then((data) => {
+            console.log("OK")
+            console.log(data)
+            res.render("managers", { "managers": data })
+        })
+        .catch((error) => {
+            console.log("NOT OK")
+            console.log(error)
+            res.send(error)
+        })
+})
+
+app.get('/managers/add', (req, res) => {
+    res.render("managersAdd")
 })
 
 app.listen(3000, () => {

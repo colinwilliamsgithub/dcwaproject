@@ -101,9 +101,9 @@ function deleteProduct(productID) {
     })
 }
 
-function findAll () {
+function findAll() {
     return new Promise((resolve, reject) => {
-        var cursor = coll.find({}).sort({"_id": 1})
+        var cursor = coll.find({}).sort({ "_id": 1 })
         cursor.toArray()
             .then((documents) => {
                 resolve(documents)
@@ -114,4 +114,16 @@ function findAll () {
     })
 }
 
-module.exports = { getProducts, getStores, updateStore, addStore, deleteProduct, findAll }
+function addManager(newManager) {
+    return new Promise((resolve, reject) => {
+        coll.insertOne(newManager, (error, result) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+module.exports = { getProducts, getStores, updateStore, addStore, deleteProduct, findAll, addManager }

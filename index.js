@@ -1,7 +1,6 @@
 var express = require('express')
 var ejs = require('ejs')
-var mySQLDAO = require('./mySQLmongoDB')
-var mongoDAO = require('./mySQLmongoDB')
+var mySQLmongoDB = require('./mySQLmongoDB')
 var axios = require('axios');
 
 var app = express()
@@ -14,7 +13,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/stores', (req, res) => {
-    mySQLDAO.getStores()
+    mySQLmongoDB.getStores()
         .then((data) => {
             console.log(data)
             res.render("store", { "store": data })
@@ -24,7 +23,7 @@ app.get('/stores', (req, res) => {
 
 app.get('/stores/edit/:sid', (req, res) => {
     const storeId = req.params.sid
-    mySQLDAO.getStores()
+    mySQLmongoDB.getStores()
         .then((data) => {
             const currentStore = data.find(store => store.sid === storeId)
             console.log(data)
@@ -41,20 +40,20 @@ app.post('/stores/edit/:sid', (req, res) => {
         mgrid: req.body.mgrid,
     }
 
-    mySQLDAO.updateStore(storeId, updatedStore)
+    mySQLmongoDB.updateStore(storeId, updatedStore)
         .then(() => {
             console.log(`Store with ID ${storeId} updated successfully`)
             res.redirect('/stores') // Redirect to the stores page after successful update
         })
         .catch(error => {
             console.error(error)
-            mySQLDAO.getStores()
-        .then((data) => {
-            const currentStore = data.find(store => store.sid === storeId)
-            console.log(data)
-            res.render("storeError", { "store": currentStore })
-        })
-        .catch((error) => res.send(error))
+            mySQLmongoDB.getStores()
+                .then((data) => {
+                    const currentStore = data.find(store => store.sid === storeId)
+                    console.log(data)
+                    res.render("storeError", { "store": currentStore })
+                })
+                .catch((error) => res.send(error))
         });
 });
 
@@ -69,7 +68,7 @@ app.post('/stores/add', (req, res) => {
         mgrid: req.body.mgrid,
     }
 
-    mySQLDAO.addStore(newStore)
+    mySQLmongoDB.addStore(newStore)
         .then(() => {
             console.log(`Store added successfully`)
             res.redirect('/stores') // Redirect to the stores page after successful update
@@ -77,10 +76,10 @@ app.post('/stores/add', (req, res) => {
         .catch(error => {
             console.error(error)
         })
-});
+})
 
 app.get('/products', (req, res) => {
-    mySQLDAO.getProducts()
+    mySQLmongoDB.getProducts()
         .then((data) => {
             console.log(data)
             res.render("product", { "product": data })
@@ -90,23 +89,24 @@ app.get('/products', (req, res) => {
 
 app.get('/products/delete/:pid', (req, res) => {
     const productID = req.params.pid
-    mySQLDAO.deleteProduct(productID)
+    mySQLmongoDB.deleteProduct(productID)
         .then(() => {
             console.log(`Product with ID ${productID} deleted successfully`)
             res.redirect('/products') // Redirect to the product page after successful update
         })
-        .catch(() => {mySQLDAO.getProducts()
-        .then((data) => {
-            const currentProduct = data.find(product => product.pid === productID)
-            console.log(data)
-            res.render("productError", { "product": currentProduct })
+        .catch(() => {
+            mySQLmongoDB.getProducts()
+            .then((data) => {
+                const currentProduct = data.find(product => product.pid === productID)
+                console.log(data)
+                res.render("productError", { "product": currentProduct })
+            })
+            .catch((error) => res.send(error))
         })
-        .catch((error) => res.send(error))
-})
 })
 
 app.get('/managers', (req, res) => {
-    mongoDAO.findAll()
+    mySQLmongoDB.findAll()
         .then((data) => {
             console.log("OK")
             console.log(data)
@@ -121,6 +121,21 @@ app.get('/managers', (req, res) => {
 
 app.get('/managers/add', (req, res) => {
     res.render("managersAdd")
+})
+
+app.post('/managers/add', (req, res) => {
+    const newManager = {
+        _id: req.body._id,
+        name: req.body.name,
+        salary: req.body.salary,
+    }
+
+    res.redirect('/managers')
+
+    mySQLmongoDB.addManager(newManager)
+        .catch(error => {
+            console.error(error)
+        })
 })
 
 app.listen(3000, () => {

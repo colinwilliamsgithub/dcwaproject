@@ -8,10 +8,14 @@ var app = express()
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 
+// Routes
+
+// Default route
 app.get('/', (req, res) => {
     res.render("index")
 })
 
+// Displays list of stores
 app.get('/stores', (req, res) => {
     mySQLmongoDB.getStores()
         .then((data) => {
@@ -21,6 +25,7 @@ app.get('/stores', (req, res) => {
         .catch((error) => res.send(error))
 })
 
+// Edit a specific store
 app.get('/stores/edit/:sid', (req, res) => {
     const storeId = req.params.sid
     mySQLmongoDB.getStores()
@@ -32,7 +37,7 @@ app.get('/stores/edit/:sid', (req, res) => {
         .catch((error) => res.send(error))
 })
 
-// Add a new route for handling the POST request
+// POST request to update store
 app.post('/stores/edit/:sid', (req, res) => {
     const storeId = req.params.sid;
     const updatedStore = {
@@ -40,10 +45,11 @@ app.post('/stores/edit/:sid', (req, res) => {
         mgrid: req.body.mgrid,
     }
 
+    // Update and return to stores, or render error page if an error occurs
     mySQLmongoDB.updateStore(storeId, updatedStore)
         .then(() => {
             console.log(`Store with ID ${storeId} updated successfully`)
-            res.redirect('/stores') // Redirect to the stores page after successful update
+            res.redirect('/stores')
         })
         .catch(error => {
             console.error(error)
@@ -57,10 +63,12 @@ app.post('/stores/edit/:sid', (req, res) => {
         });
 });
 
+// Page to add stores
 app.get('/stores/add', (req, res) => {
     res.render("storeAdd")
 })
 
+// POST request to add a store
 app.post('/stores/add', (req, res) => {
     const newStore = {
         sid: req.body.sid,
@@ -68,16 +76,18 @@ app.post('/stores/add', (req, res) => {
         mgrid: req.body.mgrid,
     }
 
+    // Redirect to the stores page after successful update
     mySQLmongoDB.addStore(newStore)
         .then(() => {
             console.log(`Store added successfully`)
-            res.redirect('/stores') // Redirect to the stores page after successful update
+            res.redirect('/stores')
         })
         .catch(error => {
             console.error(error)
         })
 })
 
+// Displays list of products
 app.get('/products', (req, res) => {
     mySQLmongoDB.getProducts()
         .then((data) => {
@@ -87,12 +97,14 @@ app.get('/products', (req, res) => {
         .catch((error) => res.send(error))
 })
 
+// Delete a specific product
 app.get('/products/delete/:pid', (req, res) => {
     const productID = req.params.pid
+    // If successful, delete product and redirect to products page. Otherwise render error page
     mySQLmongoDB.deleteProduct(productID)
         .then(() => {
             console.log(`Product with ID ${productID} deleted successfully`)
-            res.redirect('/products') // Redirect to the product page after successful update
+            res.redirect('/products')
         })
         .catch(() => {
             mySQLmongoDB.getProducts()
@@ -105,24 +117,25 @@ app.get('/products/delete/:pid', (req, res) => {
         })
 })
 
+// Display list of managers
 app.get('/managers', (req, res) => {
-    mySQLmongoDB.findAll()
+    mySQLmongoDB.getManagers()
         .then((data) => {
-            console.log("OK")
             console.log(data)
             res.render("managers", { "managers": data })
         })
         .catch((error) => {
-            console.log("NOT OK")
             console.log(error)
             res.send(error)
         })
 })
 
+// Page to add a manager
 app.get('/managers/add', (req, res) => {
     res.render("managersAdd")
 })
 
+// POST request to add a manager
 app.post('/managers/add', (req, res) => {
     const newManager = {
         _id: req.body._id,
@@ -130,11 +143,13 @@ app.post('/managers/add', (req, res) => {
         salary: parseInt(req.body.salary),
     }
 
+    // If the salary is not in the specified range, render error page
     if (newManager.salary < 30000 || newManager.salary > 70000) {
         res.render("managerError")
         return;
     }
 
+    // Redirect to managers
     res.redirect('/managers')
 
     mySQLmongoDB.addManager(newManager)
@@ -143,6 +158,7 @@ app.post('/managers/add', (req, res) => {
         })
 })
 
+// Start server and listen on port 3000
 app.listen(3000, () => {
     console.log("Listening on port 3000")
 })

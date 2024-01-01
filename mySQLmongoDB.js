@@ -28,6 +28,7 @@ MongoClient.connect('mongodb://127.0.0.1:27017')
         console.log(error.message)
     })
 
+// Function to get store info from database
 function getStores() {
     return new Promise((resolve, reject) => {
         pool.query('SELECT * FROM store')
@@ -57,6 +58,7 @@ function updateStore(storeId, updatedStore) {
     })
 }
 
+// Function to add a store to the database
 function addStore(newStore) {
     const { sid, location, mgrid } = newStore;
 
@@ -73,7 +75,7 @@ function addStore(newStore) {
     })
 }
 
-
+// Function to get product info from the database
 function getProducts() {
     return new Promise((resolve, reject) => {
         pool.query('SELECT p.pid, s.sid, ps.Price, s.location, p.productdesc FROM product p LEFT JOIN (store s, product_store ps) ON ps.pid = p.pid AND ps.sid = s.sid ORDER BY p.pid asc;')
@@ -86,6 +88,7 @@ function getProducts() {
     })
 }
 
+// Function to delete product info from the database
 function deleteProduct(productID) {
 
     const query = `DELETE FROM product WHERE pid = ?`;
@@ -101,7 +104,8 @@ function deleteProduct(productID) {
     })
 }
 
-function findAll() {
+// Function to get manager info from the database
+function getManagers() {
     return new Promise((resolve, reject) => {
         var cursor = coll.find({}).sort({ "_id": 1 })
         cursor.toArray()
@@ -114,6 +118,7 @@ function findAll() {
     })
 }
 
+// Function to add manager info to the database
 function addManager(newManager) {
     return new Promise((resolve, reject) => {
         coll.insertOne(newManager, (error, result) => {
@@ -126,4 +131,4 @@ function addManager(newManager) {
     });
 }
 
-module.exports = { getProducts, getStores, updateStore, addStore, deleteProduct, findAll, addManager }
+module.exports = { getProducts, getStores, updateStore, addStore, deleteProduct, getManagers, addManager }

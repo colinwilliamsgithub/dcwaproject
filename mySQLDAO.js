@@ -17,7 +17,7 @@ pmysql.createPool({
 
 function getProducts() {
     return new Promise((resolve, reject) => {
-        pool.query('SELECT ps.*, s.location, p.productdesc FROM product_store ps INNER JOIN (store s, product p) ON ps.pid = p.pid AND ps.sid = s.sid ORDER BY ps.pid asc')
+        pool.query('SELECT p.pid, s.sid, ps.Price, s.location, p.productdesc FROM product p LEFT JOIN (store s, product_store ps) ON ps.pid = p.pid AND ps.sid = s.sid ORDER BY p.pid asc;')
             .then((data) => {
                 resolve(data)
             })

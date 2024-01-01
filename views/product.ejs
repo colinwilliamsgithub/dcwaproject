@@ -1,13 +1,13 @@
 <title>Products</title>
 
-<table>
+<table border="1">
     <tr>
-        <th>PID</th>
+        <th>Product ID</th>
         <th>Description</th>
-        <th>SID</th>
+        <th>Store ID</th>
         <th>Location</th>
         <th>Price</th>
-        <th>Delete</th>
+        <th></th>
     </tr>
 
     <% product_store.forEach((currentElement)=> { %>
@@ -25,7 +25,7 @@
                 <%= currentElement.location %>
             </td>
             <td>
-                <%= currentElement.price %>
+                <%= currentElement.Price %>
             </td>
         </tr>
 

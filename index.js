@@ -22,12 +22,12 @@ app.get('/stores', (req, res) => {
 })
 
 app.get('/stores/edit/:sid', (req, res) => {
-    const storeId = req.params.sid;
+    const storeId = req.params.sid
     mySQLDAO.getStores()
         .then((data) => {
-            const currentStore = data.find(store => store.sid === storeId);
+            const currentStore = data.find(store => store.sid === storeId)
             console.log(data)
-            res.render("storeupdate", { "store": currentStore })
+            res.render("storeUpdate", { "store": currentStore })
         })
         .catch((error) => res.send(error))
 })
@@ -38,16 +38,16 @@ app.post('/stores/edit/:sid', (req, res) => {
     const updatedStore = {
         location: req.body.location,
         mgrid: req.body.mgrid,
-    };
+    }
 
     mySQLDAO.updateStore(storeId, updatedStore)
         .then(() => {
-            console.log(`Store with ID ${storeId} updated successfully`);
-            res.redirect('/stores'); // Redirect to the stores page after successful update
+            console.log(`Store with ID ${storeId} updated successfully`)
+            res.redirect('/stores') // Redirect to the stores page after successful update
         })
         .catch(error => {
-            console.error(error);
-            res.send(error);
+            console.error(error)
+            res.send(error)
         });
 });
 
@@ -55,9 +55,26 @@ app.get('/products', (req, res) => {
     mySQLDAO.getProducts()
         .then((data) => {
             console.log(data)
-            res.render("product", { "product_store": data })
+            res.render("product", { "product": data })
         })
         .catch((error) => res.send(error))
+})
+
+app.get('/products/delete/:pid', (req, res) => {
+    const productID = req.params.pid
+    mySQLDAO.deleteProduct(productID)
+        .then(() => {
+            console.log(`Product with ID ${productID} deleted successfully`)
+            res.redirect('/products') // Redirect to the product page after successful update
+        })
+        .catch(() => {mySQLDAO.getProducts()
+        .then((data) => {
+            const currentProduct = data.find(product => product.pid === productID)
+            console.log(data)
+            res.render("productError", { "product": currentProduct })
+        })
+        .catch((error) => res.send(error))
+})
 })
 
 app.listen(3000, () => {

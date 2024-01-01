@@ -10,7 +10,7 @@
         <th></th>
     </tr>
 
-    <% product_store.forEach((currentElement)=> { %>
+    <% product.forEach((currentElement)=> { %>
         <tr>
             <td>
                 <%= currentElement.pid %>
@@ -26,6 +26,9 @@
             </td>
             <td>
                 <%= currentElement.Price %>
+            </td>
+            <td>
+                <a href="/products/delete/<%= currentElement.pid %>">Delete</a>
             </td>
         </tr>
 

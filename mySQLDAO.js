@@ -15,18 +15,6 @@ pmysql.createPool({
         console.log("pool error:" + e)
     })
 
-function getProducts() {
-    return new Promise((resolve, reject) => {
-        pool.query('SELECT p.pid, s.sid, ps.Price, s.location, p.productdesc FROM product p LEFT JOIN (store s, product_store ps) ON ps.pid = p.pid AND ps.sid = s.sid ORDER BY p.pid asc;')
-            .then((data) => {
-                resolve(data)
-            })
-            .catch(error => {
-                reject(error)
-            })
-    })
-}
-
 function getStores() {
     return new Promise((resolve, reject) => {
         pool.query('SELECT * FROM store')
@@ -48,12 +36,39 @@ function updateStore(storeId, updatedStore) {
     return new Promise((resolve, reject) => {
         pool.query(query, [location, mgrid, storeId], (error, results) => {
             if (error) {
-                reject(error);
+                reject(error)
             } else {
-                resolve(results);
+                resolve(results)
             }
-        });
-    });
+        })
+    })
 }
 
-module.exports = { getProducts, getStores, updateStore }
+function getProducts() {
+    return new Promise((resolve, reject) => {
+        pool.query('SELECT p.pid, s.sid, ps.Price, s.location, p.productdesc FROM product p LEFT JOIN (store s, product_store ps) ON ps.pid = p.pid AND ps.sid = s.sid ORDER BY p.pid asc;')
+            .then((data) => {
+                resolve(data)
+            })
+            .catch(error => {
+                reject(error)
+            })
+    })
+}
+
+function deleteProduct(productID) {
+
+    const query = `DELETE FROM product WHERE pid = ?`;
+
+    return new Promise((resolve, reject) => {
+        pool.query(query, [productID], (error, results) => {
+            if (error) {
+                reject(error)
+            } else {
+                resolve(results)
+            }
+        })
+    })
+}
+
+module.exports = { getProducts, getStores, updateStore, deleteProduct }
